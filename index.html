@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Quản lý Sự cố Thông minh</title>
+
+    <!-- Thư viện Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+        }
+
+        #map {
+            height: 550px;
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a3a5c, #2d6da8);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+
+        .header small {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .control-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2d6da8;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 40px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 22px;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: #2d6da8;
+        }
+
+        .btn-primary:hover {
+            background: #1a3a5c;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #1e7e34;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #a71d2a;
+            transform: translateY(-1px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-1px);
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #2d6da8;
+            margin-top: 15px;
+        }
+
+        .info-box h3 {
+            font-size: 15px;
+            color: #1a3a5c;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box .count-badge {
+            background: #2d6da8;
+            color: white;
+            padding: 1px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .info-box.green {
+            border-left-color: #28a745;
+        }
+
+        .info-box.green h3 {
+            color: #1e7e34;
+        }
+
+        .info-box.green .count-badge {
+            background: #28a745;
+        }
+
+        .list-container {
+            max-height: 200px;
+            overflow-y: auto;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .list-item {
+            padding: 8px 14px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-item:hover {
+            background: #f8f9fa;
+        }
+
+        .list-item .name {
+            font-weight: 500;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .list-item .tag {
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .tag-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .tag-maintenance {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .tag-repair {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .tag-distance {
+            background: #e8f0fe;
+            color: #1a3a5c;
+            font-size: 12px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #2d6da8;
+            font-weight: 600;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .status-message {
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+            font-weight: 500;
+        }
+
+        .status-message.success {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-message.error {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-message.info {
+            display: block;
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .control-panel {
+                flex-direction: column;
+            }
+
+            .form-group {
+                min-width: 100%;
+            }
+
+            .btn-group {
+                width: 100%;
+            }
+
+            .btn-group .btn {
+                flex: 1;
+                text-align: center;
+            }
+        }
+
+        /* Scrollbar đẹp */
+        .list-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .list-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .list-container::-webkit-scrollbar-thumb {
+            background: #c1c7cd;
+            border-radius: 4px;
+        }
+
+        .list-container::-webkit-scrollbar-thumb:hover {
+            background: #a0a8b0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div>
+                <h1>⚡ Smart Utility Incident Management</h1>
+                <small>Hệ thống quản lý và cảnh báo sự cố mạng lưới điện/nước</small>
+            </div>
+            <div class="header-right">
+                <span class="badge">📍 TP.HCM</span>
+                <span class="badge">v2.0</span>
+            </div>
+        </div>
+
+        <!-- BẢN ĐỒ -->
+        <div id="map"></div>
+
+        <!-- BẢNG ĐIỀU KHIỂN -->
+        <div class="control-panel">
+            <div class="form-group">
+                <label>📝 Mô tả sự cố</label>
+                <textarea id="incidentDesc" rows="1"
+                    placeholder="VD: Đứt dây điện tại ngã tư...">Sự cố mất điện khu vực</textarea>
+            </div>
+            <div class="form-group" style="flex:0.5; min-width:120px;">
+                <label>📏 Bán kính (m)</label>
+                <input type="number" id="incidentRadius" value="100" min="10" max="1000">
+            </div>
+            <div class="form-group" style="flex:0.5; min-width:120px;">
+                <label>🔍 Bán kính tài sản (m)</label>
+                <input type="number" id="assetRadius" value="300" min="50" max="2000">
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="simulateIncident()">🚨 Tạo sự cố</button>
+                <button class="btn btn-success" onclick="findNearbyAssets()">🔍 Tìm tài sản</button>
+                <button class="btn btn-danger" onclick="clearMap()">🗑️ Xóa tất cả</button>
+            </div>
+        </div>
+
+        <!-- TRẠNG THÁI -->
+        <div id="statusMessage" class="status-message"></div>
+        <div id="loadingIndicator" class="loading">⏳ Đang xử lý...</div>
+
+        <!-- KẾT QUẢ 2 CỘT -->
+        <div class="two-columns">
+            <!-- Kết quả khách hàng -->
+            <div id="resultBox" class="info-box" style="display:none;">
+                <h3>👥 Khách hàng bị ảnh hưởng <span id="customerCount" class="count-badge">0</span></h3>
+                <div id="customerList" class="list-container"></div>
+            </div>
+
+            <!-- Kết quả tài sản -->
+            <div id="assetResultBox" class="info-box green" style="display:none;">
+                <h3>🏗️ Tài sản gần nhất <span id="assetCount" class="count-badge">0</span></h3>
+                <div id="assetList" class="list-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== KHỞI TẠO BẢN ĐỒ =====
+        const map = L.map('map').setView([10.8231, 106.6297], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // ===== BIẾN TOÀN CỤ =====
+        let clickedPoint = null;
+        let circleLayer = null;
+        let assetCircle = null;
+        let customerMarkers = L.layerGroup().addTo(map);
+        let assetMarkers = L.layerGroup().addTo(map);
+        let incidentMarker = null;
+
+        // ===== XỬ LÝ CLICK TRÊN BẢN ĐỒ =====
+        map.on('click', function (e) {
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
+            clickedPoint = { lat, lng };
+
+            if (incidentMarker) {
+                map.removeLayer(incidentMarker);
+            }
+
+            incidentMarker = L.marker([lat, lng], {
+                icon: L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41]
+                })
+            }).addTo(map)
+                .bindPopup(`📍 Sự cố tại: ${lat.toFixed(6)}, ${lng.toFixed(6)}`)
+                .openPopup();
+
+            showStatus(`📍 Đã chọn vị trí (${lat.toFixed(6)}, ${lng.toFixed(6)}). Chọn chức năng để xử lý.`, 'info');
+        });
+
+        // ================================================================
+        //  CHỨC NĂNG 1: TẠO SỰ CỐ - TÌM KHÁCH HÀNG BỊ ẢNH HƯỞNG
+        // ================================================================
+        async function simulateIncident() {
+            if (!clickedPoint) {
+                showStatus('⚠️ Vui lòng click chọn vị trí sự cố trên bản đồ!', 'error');
+                return;
+            }
+
+            const description = document.getElementById('incidentDesc').value || 'Sự cố';
+            const radius = parseInt(document.getElementById('incidentRadius').value) || 100;
+
+            document.getElementById('loadingIndicator').classList.add('active');
+            document.getElementById('resultBox').style.display = 'none';
+            hideStatus();
+
+            try {
+                const response = await fetch('http://localhost:8000/api/incidents', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        lat: clickedPoint.lat,
+                        lng: clickedPoint.lng,
+                        description: description,
+                        radius: radius
+                    })
+                });
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errText}`);
+                }
+
+                const data = await response.json();
+                console.log('✅ Dữ liệu sự cố:', data);
+
+                displayCustomers(data, clickedPoint.lat, clickedPoint.lng, radius);
+                showStatus(`✅ ${data.message}`, 'success');
+
+            } catch (error) {
+                console.error('❌ Lỗi:', error);
+                showStatus(`❌ Lỗi: ${error.message}`, 'error');
+            } finally {
+                document.getElementById('loadingIndicator').classList.remove('active');
+            }
+        }
+
+        function displayCustomers(data, lat, lng, radius) {
+            // Vẽ vòng tròn đỏ
+            if (circleLayer) map.removeLayer(circleLayer);
+            circleLayer = L.circle([lat, lng], {
+                radius: radius,
+                color: '#ff4444',
+                fillColor: '#ff4444',
+                fillOpacity: 0.12,
+                weight: 2
+            }).addTo(map);
+
+            // Xóa markers cũ
+            customerMarkers.clearLayers();
+
+            const customers = data.customers || [];
+            document.getElementById('customerCount').textContent = customers.length;
+
+            const listDiv = document.getElementById('customerList');
+
+            if (customers.length > 0) {
+                let html =
+                    `<div class="list-item" style="font-weight:600;background:#e8f0fe;color:#1a3a5c;font-size:12px;">
+                        <span>Tên khách hàng</span>
+                        <span>Khoảng cách</span>
+                    </div>`;
+
+                customers.forEach((c, index) => {
+                    // Tạo marker cho từng khách hàng (mô phỏng vị trí nếu ko có tọa độ)
+                    const cLat = c.lat || lat + (Math.random() - 0.5) * 0.002;
+                    const cLng = c.lng || lng + (Math.random() - 0.5) * 0.002;
+
+                    const marker = L.marker([cLat, cLng], {
+                        icon: L.icon({
+                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+                            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                            iconSize: [25, 41],
+                            iconAnchor: [12, 41]
+                        })
+                    }).addTo(customerMarkers);
+
+                    marker.bindPopup(`
+                        <b>${c.customer_name}</b><br>
+                        📞 ${c.phone || '---'}<br>
+                        📄 ${c.contract_no || '---'}<br>
+                        📏 ${(c.distance_meters || 0).toFixed(0)}m
+                    `);
+
+                    const dist = (c.distance_meters || 0).toFixed(0);
+                    html += `
+                        <div class="list-item">
+                            <span class="name">👤 ${c.customer_name}</span>
+                            <span class="tag tag-distance">📏 ${dist}m</span>
+                        </div>
+                    `;
+                });
+
+                listDiv.innerHTML = html;
+
+                // Zoom vào khu vực
+                if (customerMarkers.getLayers().length > 0) {
+                    const group = L.featureGroup(customerMarkers.getLayers());
+                    map.fitBounds(group.getBounds().pad(0.15));
+                }
+            } else {
+                listDiv.innerHTML =
+                    '<div style="padding:20px;text-align:center;color:#666;">✅ Không có khách hàng nào trong vùng ảnh hưởng</div>';
+            }
+
+            document.getElementById('resultBox').style.display = 'block';
+        }
+
+        // ================================================================
+        //  CHỨC NĂNG 2: TÌM TÀI SẢN GẦN NHẤT
+        // ================================================================
+        async function findNearbyAssets() {
+            if (!clickedPoint) {
+                showStatus('⚠️ Vui lòng click chọn vị trí trên bản đồ!', 'error');
+                return;
+            }
+
+            const radius = parseInt(document.getElementById('assetRadius').value) || 300;
+
+            document.getElementById('loadingIndicator').classList.add('active');
+            document.getElementById('assetResultBox').style.display = 'none';
+            hideStatus();
+
+            try {
+                const response = await fetch(
+                    `http://localhost:8000/api/assets/nearby?lat=${clickedPoint.lat}&lng=${clickedPoint.lng}&range_meters=${radius}`
+                );
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('🏗️ Tài sản tìm thấy:', data);
+
+                displayAssets(data, clickedPoint.lat, clickedPoint.lng, radius);
+                showStatus(`✅ Tìm thấy ${data.count || 0} tài sản trong bán kính ${radius}m`, 'success');
+
+            } catch (error) {
+                console.error('❌ Lỗi:', error);
+                showStatus(`❌ Lỗi: ${error.message}`, 'error');
+            } finally {
+                document.getElementById('loadingIndicator').classList.remove('active');
+            }
+        }
+
+        function displayAssets(data, lat, lng, radius) {
+            // Vẽ vòng tròn xanh
+            if (assetCircle) map.removeLayer(assetCircle);
+            assetCircle = L.circle([lat, lng], {
+                radius: radius,
+                color: '#28a745',
+                fillColor: '#28a745',
+                fillOpacity: 0.08,
+                weight: 2,
+                dashArray: '6, 4'
+            }).addTo(map);
+
+            // Xóa markers tài sản cũ
+            assetMarkers.clearLayers();
+
+            const assets = data.assets || [];
+            document.getElementById('assetCount').textContent = assets.length;
+
+            const listDiv = document.getElementById('assetList');
+
+            if (assets.length > 0) {
+                let html =
+                    `<div class="list-item" style="font-weight:600;background:#e8f5e9;color:#1e7e34;font-size:12px;">
+                        <span>Tên tài sản</span>
+                        <span>Trạng thái</span>
+                        <span>Khoảng cách</span>
+                    </div>`;
+
+                assets.forEach((a) => {
+                    // Chọn màu marker theo trạng thái
+                    let color = 'green';
+                    let statusLabel = '🟢 Hoạt động';
+                    if (a.status === 'maintenance') {
+                        color = 'orange';
+                        statusLabel = '🟡 Bảo trì';
+                    } else if (a.status === 'repair') {
+                        color = 'red';
+                        statusLabel = '🔴 Sửa chữa';
+                    }
+
+                    const marker = L.marker([a.lat, a.lng], {
+                        icon: L.icon({
+                            iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${color}.png`,
+                            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                            iconSize: [25, 41],
+                            iconAnchor: [12, 41]
+                        })
+                    }).addTo(assetMarkers);
+
+                    marker.bindPopup(`
+                        <b>🏗️ ${a.asset_name}</b><br>
+                        📌 Loại: ${a.asset_type}<br>
+                        📊 Trạng thái: <b>${a.status}</b><br>
+                        📏 Cách: ${a.distance_meters.toFixed(0)}m
+                    `);
+
+                    const dist = a.distance_meters.toFixed(0);
+                    const statusClass = a.status === 'active' ? 'tag-active' :
+                        a.status === 'maintenance' ? 'tag-maintenance' : 'tag-repair';
+
+                    html += `
+                        <div class="list-item">
+                            <span class="name">🏗️ ${a.asset_name}</span>
+                            <span class="tag ${statusClass}">${statusLabel}</span>
+                            <span class="tag tag-distance">📏 ${dist}m</span>
+                        </div>
+                    `;
+                });
+
+                listDiv.innerHTML = html;
+
+                // Zoom vào khu vực
+                if (assetMarkers.getLayers().length > 0) {
+                    const group = L.featureGroup(assetMarkers.getLayers());
+                    map.fitBounds(group.getBounds().pad(0.15));
+                }
+            } else {
+                listDiv.innerHTML =
+                    '<div style="padding:20px;text-align:center;color:#666;">📍 Không có tài sản nào trong bán kính</div>';
+            }
+
+            document.getElementById('assetResultBox').style.display = 'block';
+        }
+
+        // ================================================================
+        //  XÓA TẤT CẢ
+        // ================================================================
+        function clearMap() {
+            if (circleLayer) {
+                map.removeLayer(circleLayer);
+                circleLayer = null;
+            }
+            if (assetCircle) {
+                map.removeLayer(assetCircle);
+                assetCircle = null;
+            }
+            customerMarkers.clearLayers();
+            assetMarkers.clearLayers();
+            if (incidentMarker) {
+                map.removeLayer(incidentMarker);
+                incidentMarker = null;
+            }
+
+            clickedPoint = null;
+            document.getElementById('resultBox').style.display = 'none';
+            document.getElementById('assetResultBox').style.display = 'none';
+            hideStatus();
+            showStatus('🗑️ Đã xóa tất cả dữ liệu hiển thị', 'success');
+            setTimeout(hideStatus, 3000);
+        }
+
+        // ================================================================
+        //  UTILITY FUNCTIONS
+        // ================================================================
+        function showStatus(message, type) {
+            const el = document.getElementById('statusMessage');
+            el.textContent = message;
+            el.className = `status-message ${type}`;
+        }
+
+        function hideStatus() {
+            const el = document.getElementById('statusMessage');
+            el.className = 'status-message';
+            el.textContent = '';
+        }
+
+        // ================================================================
+        //  KIỂM TRA API KHI MỞ TRANG
+        // ================================================================
+        async function testAPI() {
+            try {
+                const response = await fetch('http://localhost:8000/api/assets/nearby?lat=10.8231&lng=106.6297&range_meters=500');
+                if (response.ok) {
+                    console.log('✅ API đang hoạt động!');
+                }
+            } catch (error) {
+                console.warn('⚠️ Không kết nối được API:', error);
+                showStatus('⚠️ Không thể kết nối API. Hãy chạy python app.py!', 'error');
+            }
+        }
+        testAPI();
+
+        // Hướng dẫn ban đầu
+        showStatus('💡 Click lên bản đồ để chọn vị trí, sau đó chọn "Tạo sự cố" hoặc "Tìm tài sản"', 'info');
+    </script>
+</body>
+
+</html>
