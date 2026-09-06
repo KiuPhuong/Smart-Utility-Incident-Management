@@ -17,7 +17,6 @@ Tại TP.HCM, mỗi khi xảy ra sự cố mất điện hoặc nước, các c�
 Hệ thống cho phép chỉ cần một cú click trên bản đồ để:
 - Khoanh vùng ảnh hưởng và **liệt kê chính xác từng khách hàng** bị tác động
 - Định vị **cột điện hoặc trạm biến áp gần nhất** để cử người sửa chữa
-- Tự động **gửi cảnh báo SMS/Zalo** đến 100% khách hàng trong vùng
 
 **Thời gian xử lý giảm từ 30-45 phút xuống còn dưới 10 giây.**
 
@@ -48,10 +47,7 @@ Sử dụng PostGIS để tìm kiếm không gian, trả về danh sách khách 
 ### 2. Tìm tài sản gần nhất
 Xác định cột điện hoặc trạm biến áp gần nhất cùng trạng thái hoạt động (active/maintenance/repair).
 
-### 3. Gửi cảnh báo tự động
-Mô phỏng tích hợp SMS/Zalo để thông báo đến khách hàng.
-
-### 4. Bản đồ tương tác
+### 3. Bản đồ tương tác
 Hiển thị trực quan vùng ảnh hưởng, vị trí khách hàng và tài sản.
 
 ---
