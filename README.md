@@ -55,7 +55,7 @@ Hiển thị trực quan vùng ảnh hưởng, vị trí khách hàng và tài s
 ## 📦 Demo
 
 ```bash
-# Cài đặt và chạy trong 5 phút
+# Cài đặt và chạy
 pip install -r requirements.txt
 python data_generator.py   # Tạo 1 triệu khách hàng + 10 nghìn tài sản
 python app.py              # Chạy backend
