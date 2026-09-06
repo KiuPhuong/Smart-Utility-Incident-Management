@@ -1,4 +1,3 @@
-# Tạo file README.md
 echo "# Smart Utility Incident Management
 
 Hệ thống quản lý sự cố thông minh cho mạng lưới điện/nước.
