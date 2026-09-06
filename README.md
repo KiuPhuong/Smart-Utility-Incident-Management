@@ -15,8 +15,8 @@ Tại TP.HCM, mỗi khi xảy ra sự cố mất điện hoặc nước, các c�
 ## 🚀 Giải pháp
 
 Hệ thống cho phép chỉ cần một cú click trên bản đồ để:
-- Khoanh vùng ảnh hưởng và **liệt kê chính xác từng khách hàng** bị tác động
-- Định vị **cột điện hoặc trạm biến áp gần nhất** để cử người sửa chữa
+- Khoanh vùng ảnh hưởng và liệt kê chính xác từng khách hàng bị tác động
+- Định vị cột điện hoặc trạm biến áp gần nhất để cử người sửa chữa
 
 **Thời gian xử lý giảm từ 30-45 phút xuống còn dưới 10 giây.**
 
