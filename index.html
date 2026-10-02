@@ -371,11 +371,11 @@
         <!-- HEADER -->
         <div class="header">
             <div>
-                <h1>⚡ Smart Utility Incident Management</h1>
+                <h1> Smart Utility Incident Management</h1>
                 <small>Hệ thống quản lý và cảnh báo sự cố mạng lưới điện/nước</small>
             </div>
             <div class="header-right">
-                <span class="badge">📍 TP.HCM</span>
+                <span class="badge"> TP.HCM</span>
                 <span class="badge">v2.0</span>
             </div>
         </div>
@@ -386,22 +386,22 @@
         <!-- BẢNG ĐIỀU KHIỂN -->
         <div class="control-panel">
             <div class="form-group">
-                <label>📝 Mô tả sự cố</label>
+                <label> Mô tả sự cố</label>
                 <textarea id="incidentDesc" rows="1"
                     placeholder="VD: Đứt dây điện tại ngã tư...">Sự cố mất điện khu vực</textarea>
             </div>
             <div class="form-group" style="flex:0.5; min-width:120px;">
-                <label>📏 Bán kính (m)</label>
+                <label> Bán kính (m)</label>
                 <input type="number" id="incidentRadius" value="100" min="10" max="1000">
             </div>
             <div class="form-group" style="flex:0.5; min-width:120px;">
-                <label>🔍 Bán kính tài sản (m)</label>
+                <label> Bán kính tài sản (m)</label>
                 <input type="number" id="assetRadius" value="300" min="50" max="2000">
             </div>
             <div class="btn-group">
-                <button class="btn btn-primary" onclick="simulateIncident()">🚨 Tạo sự cố</button>
-                <button class="btn btn-success" onclick="findNearbyAssets()">🔍 Tìm tài sản</button>
-                <button class="btn btn-danger" onclick="clearMap()">🗑️ Xóa tất cả</button>
+                <button class="btn btn-primary" onclick="simulateIncident()"> Tạo sự cố</button>
+                <button class="btn btn-success" onclick="findNearbyAssets()"> Tìm tài sản</button>
+                <button class="btn btn-danger" onclick="clearMap()"> Xóa tất cả</button>
             </div>
         </div>
 
@@ -413,13 +413,13 @@
         <div class="two-columns">
             <!-- Kết quả khách hàng -->
             <div id="resultBox" class="info-box" style="display:none;">
-                <h3>👥 Khách hàng bị ảnh hưởng <span id="customerCount" class="count-badge">0</span></h3>
+                <h3> Khách hàng bị ảnh hưởng <span id="customerCount" class="count-badge">0</span></h3>
                 <div id="customerList" class="list-container"></div>
             </div>
 
             <!-- Kết quả tài sản -->
             <div id="assetResultBox" class="info-box green" style="display:none;">
-                <h3>🏗️ Tài sản gần nhất <span id="assetCount" class="count-badge">0</span></h3>
+                <h3> Tài sản gần nhất <span id="assetCount" class="count-badge">0</span></h3>
                 <div id="assetList" class="list-container"></div>
             </div>
         </div>
@@ -459,10 +459,10 @@
                     iconAnchor: [12, 41]
                 })
             }).addTo(map)
-                .bindPopup(`📍 Sự cố tại: ${lat.toFixed(6)}, ${lng.toFixed(6)}`)
+                .bindPopup(` Sự cố tại: ${lat.toFixed(6)}, ${lng.toFixed(6)}`)
                 .openPopup();
 
-            showStatus(`📍 Đã chọn vị trí (${lat.toFixed(6)}, ${lng.toFixed(6)}). Chọn chức năng để xử lý.`, 'info');
+            showStatus(` Đã chọn vị trí (${lat.toFixed(6)}, ${lng.toFixed(6)}). Chọn chức năng để xử lý.`, 'info');
         });
 
         // ================================================================
@@ -470,7 +470,7 @@
         // ================================================================
         async function simulateIncident() {
             if (!clickedPoint) {
-                showStatus('⚠️ Vui lòng click chọn vị trí sự cố trên bản đồ!', 'error');
+                showStatus(' Vui lòng click chọn vị trí sự cố trên bản đồ!', 'error');
                 return;
             }
 
@@ -499,14 +499,14 @@
                 }
 
                 const data = await response.json();
-                console.log('✅ Dữ liệu sự cố:', data);
+                console.log(' Dữ liệu sự cố:', data);
 
                 displayCustomers(data, clickedPoint.lat, clickedPoint.lng, radius);
-                showStatus(`✅ ${data.message}`, 'success');
+                showStatus(` ${data.message}`, 'success');
 
             } catch (error) {
-                console.error('❌ Lỗi:', error);
-                showStatus(`❌ Lỗi: ${error.message}`, 'error');
+                console.error(' Lỗi:', error);
+                showStatus(` Lỗi: ${error.message}`, 'error');
             } finally {
                 document.getElementById('loadingIndicator').classList.remove('active');
             }
@@ -554,16 +554,16 @@
 
                     marker.bindPopup(`
                         <b>${c.customer_name}</b><br>
-                        📞 ${c.phone || '---'}<br>
-                        📄 ${c.contract_no || '---'}<br>
-                        📏 ${(c.distance_meters || 0).toFixed(0)}m
+                           ${c.phone || '---'}<br>
+                           ${c.contract_no || '---'}<br>
+                           ${(c.distance_meters || 0).toFixed(0)}m
                     `);
 
                     const dist = (c.distance_meters || 0).toFixed(0);
                     html += `
                         <div class="list-item">
-                            <span class="name">👤 ${c.customer_name}</span>
-                            <span class="tag tag-distance">📏 ${dist}m</span>
+                            <span class="name"> ${c.customer_name}</span>
+                            <span class="tag tag-distance"> ${dist}m</span>
                         </div>
                     `;
                 });
@@ -577,7 +577,7 @@
                 }
             } else {
                 listDiv.innerHTML =
-                    '<div style="padding:20px;text-align:center;color:#666;">✅ Không có khách hàng nào trong vùng ảnh hưởng</div>';
+                    '<div style="padding:20px;text-align:center;color:#666;"> Không có khách hàng nào trong vùng ảnh hưởng</div>';
             }
 
             document.getElementById('resultBox').style.display = 'block';
@@ -588,7 +588,7 @@
         // ================================================================
         async function findNearbyAssets() {
             if (!clickedPoint) {
-                showStatus('⚠️ Vui lòng click chọn vị trí trên bản đồ!', 'error');
+                showStatus(' Vui lòng click chọn vị trí trên bản đồ!', 'error');
                 return;
             }
 
@@ -608,14 +608,14 @@
                 }
 
                 const data = await response.json();
-                console.log('🏗️ Tài sản tìm thấy:', data);
+                console.log(' Tài sản tìm thấy:', data);
 
                 displayAssets(data, clickedPoint.lat, clickedPoint.lng, radius);
-                showStatus(`✅ Tìm thấy ${data.count || 0} tài sản trong bán kính ${radius}m`, 'success');
+                showStatus(` Tìm thấy ${data.count || 0} tài sản trong bán kính ${radius}m`, 'success');
 
             } catch (error) {
-                console.error('❌ Lỗi:', error);
-                showStatus(`❌ Lỗi: ${error.message}`, 'error');
+                console.error(' Lỗi:', error);
+                showStatus(` Lỗi: ${error.message}`, 'error');
             } finally {
                 document.getElementById('loadingIndicator').classList.remove('active');
             }
@@ -652,13 +652,13 @@
                 assets.forEach((a) => {
                     // Chọn màu marker theo trạng thái
                     let color = 'green';
-                    let statusLabel = '🟢 Hoạt động';
+                    let statusLabel = ' Hoạt động';
                     if (a.status === 'maintenance') {
                         color = 'orange';
-                        statusLabel = '🟡 Bảo trì';
+                        statusLabel = ' Bảo trì';
                     } else if (a.status === 'repair') {
                         color = 'red';
-                        statusLabel = '🔴 Sửa chữa';
+                        statusLabel = ' Sửa chữa';
                     }
 
                     const marker = L.marker([a.lat, a.lng], {
@@ -671,10 +671,10 @@
                     }).addTo(assetMarkers);
 
                     marker.bindPopup(`
-                        <b>🏗️ ${a.asset_name}</b><br>
-                        📌 Loại: ${a.asset_type}<br>
-                        📊 Trạng thái: <b>${a.status}</b><br>
-                        📏 Cách: ${a.distance_meters.toFixed(0)}m
+                        <b> ${a.asset_name}</b><br>
+                            Loại: ${a.asset_type}<br>
+                            Trạng thái: <b>${a.status}</b><br>
+                            Cách: ${a.distance_meters.toFixed(0)}m
                     `);
 
                     const dist = a.distance_meters.toFixed(0);
@@ -683,9 +683,9 @@
 
                     html += `
                         <div class="list-item">
-                            <span class="name">🏗️ ${a.asset_name}</span>
+                            <span class="name"> ${a.asset_name}</span>
                             <span class="tag ${statusClass}">${statusLabel}</span>
-                            <span class="tag tag-distance">📏 ${dist}m</span>
+                            <span class="tag tag-distance"> ${dist}m</span>
                         </div>
                     `;
                 });
@@ -699,7 +699,7 @@
                 }
             } else {
                 listDiv.innerHTML =
-                    '<div style="padding:20px;text-align:center;color:#666;">📍 Không có tài sản nào trong bán kính</div>';
+                    '<div style="padding:20px;text-align:center;color:#666;"> Không có tài sản nào trong bán kính</div>';
             }
 
             document.getElementById('assetResultBox').style.display = 'block';
@@ -728,7 +728,7 @@
             document.getElementById('resultBox').style.display = 'none';
             document.getElementById('assetResultBox').style.display = 'none';
             hideStatus();
-            showStatus('🗑️ Đã xóa tất cả dữ liệu hiển thị', 'success');
+            showStatus(' Đã xóa tất cả dữ liệu hiển thị', 'success');
             setTimeout(hideStatus, 3000);
         }
 
@@ -754,17 +754,17 @@
             try {
                 const response = await fetch('http://localhost:8000/api/assets/nearby?lat=10.8231&lng=106.6297&range_meters=500');
                 if (response.ok) {
-                    console.log('✅ API đang hoạt động!');
+                    console.log(' API đang hoạt động!');
                 }
             } catch (error) {
-                console.warn('⚠️ Không kết nối được API:', error);
-                showStatus('⚠️ Không thể kết nối API. Hãy chạy python app.py!', 'error');
+                console.warn(' Không kết nối được API:', error);
+                showStatus(' Không thể kết nối API. Hãy chạy python app.py!', 'error');
             }
         }
         testAPI();
 
         // Hướng dẫn ban đầu
-        showStatus('💡 Click lên bản đồ để chọn vị trí, sau đó chọn "Tạo sự cố" hoặc "Tìm tài sản"', 'info');
+        showStatus(' Click lên bản đồ để chọn vị trí, sau đó chọn "Tạo sự cố" hoặc "Tìm tài sản"', 'info');
     </script>
 </body>
 
