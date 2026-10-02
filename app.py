@@ -151,13 +151,13 @@ def send_notification(customers, message):
     Mô phỏng gửi cảnh báo đến khách hàng
     """
     if not customers:
-        print("📭 Không có khách hàng nào bị ảnh hưởng")
+        print(" Không có khách hàng nào bị ảnh hưởng")
         return
     
-    print(f"📨 ===== GỬI CẢNH BÁO ĐẾN {len(customers)} KHÁCH HÀNG =====")
+    print(f" ===== GỬI CẢNH BÁO ĐẾN {len(customers)} KHÁCH HÀNG =====")
     for i, customer in enumerate(customers[:5]):  # Chỉ hiển thị 5 khách hàng đầu
-        print(f"  📞 Gọi đến {customer['phone']} - KH: {customer['customer_name']}")
-        print(f"     📝 Tin nhắn: Sự cố '{message}' ảnh hưởng đến khu vực của bạn")
+        print(f"   Gọi đến {customer['phone']} - KH: {customer['customer_name']}")
+        print(f"      Tin nhắn: Sự cố '{message}' ảnh hưởng đến khu vực của bạn")
     
     if len(customers) > 5:
         print(f"  ... và {len(customers) - 5} khách hàng khác")
