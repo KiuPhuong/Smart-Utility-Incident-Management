@@ -61,7 +61,7 @@ def insert_sample_data():
         # Xóa dữ liệu cũ
         cursor.execute("DELETE FROM network_assets;")
         cursor.execute("DELETE FROM customers;")
-        print("🗑️ Đã xóa dữ liệu cũ")
+        print(" Đã xóa dữ liệu cũ")
         
         # Tạo Spatial Index
         cursor.execute("""
@@ -71,10 +71,10 @@ def insert_sample_data():
             CREATE INDEX IF NOT EXISTS idx_assets_geom 
             ON network_assets USING GIST (geom);
         """)
-        print("✅ Đã tạo Spatial Index")
+        print(" Đã tạo Spatial Index")
         
-        print("🔹 Đang tạo 1,000,000 khách hàng...")
-        print("⏳ Quá trình này có thể mất 15-30 phút!")
+        print(" Đang tạo 1,000,000 khách hàng...")
+        print(" Quá trình này có thể mất 15-30 phút!")
         
         # ---- TẠO 1 TRIỆU KHÁCH HÀNG ----
         customers = []
@@ -99,12 +99,12 @@ def insert_sample_data():
         total_customers = 1000000
         customers_per_district = total_customers // len(district_names)
         
-        print(f"📊 Mỗi quận sẽ có ~{customers_per_district:,} khách hàng")
+        print(f" Mỗi quận sẽ có ~{customers_per_district:,} khách hàng")
         
         count = 0
         for district in district_names:
             radius = DISTRICTS[district]["radius"]
-            print(f"⏳ Đang tạo {customers_per_district:,} khách hàng tại {district} (bán kính {radius}km)...")
+            print(f" Đang tạo {customers_per_district:,} khách hàng tại {district} (bán kính {radius}km)...")
             
             for i in range(customers_per_district):
                 lat, lng = generate_random_point_in_district(district)
@@ -138,9 +138,9 @@ def insert_sample_data():
                     )
                     conn.commit()
                     customers = []
-                    print(f"   ✅ Đã insert {count:,} khách hàng...")
+                    print(f"    Đã insert {count:,} khách hàng...")
             
-            print(f"✅ Hoàn thành {district} - Tổng: {count:,} khách hàng")
+            print(f" Hoàn thành {district} - Tổng: {count:,} khách hàng")
         
         # Insert phần còn lại
         if customers:
@@ -154,7 +154,7 @@ def insert_sample_data():
             conn.commit()
         
         # ---- TẠO 10,000 TÀI SẢN ----
-        print("⏳ Đang tạo 10,000 tài sản...")
+        print(" Đang tạo 10,000 tài sản...")
         assets = []
         asset_types = ['pole', 'pole', 'pole', 'pole', 'transformer', 'substation']
         vietnamese_asset_names = [
@@ -199,19 +199,19 @@ def insert_sample_data():
             conn.commit()
         
         print("\n" + "="*70)
-        print("🎉 TẠO DỮ LIỆU THÀNH CÔNG!")
+        print(" TẠO DỮ LIỆU THÀNH CÔNG!")
         print("="*70)
-        print(f"👥 Tổng số khách hàng: 1,000,000")
-        print(f"📊 Tổng số tài sản: 10,000")
-        print(f"📍 Phân bố trên {len(district_names)} quận của TP.HCM")
+        print(f" Tổng số khách hàng: 1,000,000")
+        print(f" Tổng số tài sản: 10,000")
+        print(f" Phân bố trên {len(district_names)} quận của TP.HCM")
         print("="*70)
-        print("📏 Bán kính từng quận:")
+        print(" Bán kính từng quận:")
         for district, info in DISTRICTS.items():
             print(f"   - {district}: {info['radius']}km")
         print("="*70)
         
     except Exception as e:
-        print(f"❌ LỖI: {e}")
+        print(f" LỖI: {e}")
         if conn:
             conn.rollback()
     finally:
@@ -221,9 +221,9 @@ def insert_sample_data():
 
 if __name__ == "__main__":
     print("="*70)
-    print("🚀 TẠO 1 TRIỆU KHÁCH HÀNG GIẢ LẬP - TP.HCM")
+    print(" TẠO 1 TRIỆU KHÁCH HÀNG GIẢ LẬP - TP.HCM")
     print("="*70)
     start_time = datetime.now()
     insert_sample_data()
     end_time = datetime.now()
-    print(f"⏱️ Thời gian thực hiện: {(end_time - start_time).seconds} giây")
+    print(f" Thời gian thực hiện: {(end_time - start_time).seconds} giây")
